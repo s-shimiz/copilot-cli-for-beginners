@@ -14,6 +14,7 @@ on:
       - "!translations/**"
       - "!translated_images/**"
       - "!.github/**"
+      - "!samples/skills/**"
 
 permissions:
   contents: write
@@ -91,6 +92,16 @@ jobs:
           else
             echo "co-op-review is not available in the installed Co-op Translator package; skipping."
           fi
+
+      - name: Remove excluded translations
+        run: |
+          for language in $TRANSLATION_LANGUAGES; do
+            rm -rf \
+              "translations/$language/.github" \
+              "translations/$language/samples/skills" \
+              "translated_images/$language/.github" \
+              "translated_images/$language/samples/skills"
+          done
 
       - name: Upload Co-op Translator logs
         if: always()

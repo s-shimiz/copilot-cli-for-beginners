@@ -77,9 +77,9 @@ Stop with a no-op only if all of these are true:
 2. The pull request body already contains an up-to-date managed `## Translation Quality Review` section with one grade row for every changed translated Markdown file.
 3. Every existing grade in the managed review section is **A- or higher**.
 
-If the latest commit appears to be from this Translation Polisher workflow but the pull request body is missing the `## Translation Quality Review` section, do not edit files. Still review and grade the changed translated Markdown files, update the pull request body, and add a concise comment if useful.
+If the latest commit appears to be from this Translation Polisher workflow but the pull request body is missing the `## Translation Quality Review` section, do not edit files. Still review and grade the changed translated Markdown files and update the pull request body.
 
-If the pull request body already contains a managed `## Translation Quality Review` section and any row is graded **B+ or lower**, treat those files as required repair targets. Review and polish those files again before deciding whether to push changes or leave a blocking comment.
+If the pull request body already contains a managed `## Translation Quality Review` section and any row is graded **B+ or lower**, treat those files as required repair targets. Review and polish those files again before deciding whether to push changes or report blocking issues in the managed pull request body section.
 
 Do not add churn. If the translation is already good enough and the PR body already has current A- or higher grades, leave it unchanged.
 
@@ -88,6 +88,13 @@ Do not add churn. If the translation is already good enough and the PR body alre
 You may edit only translated Markdown files:
 
 - `translations/**/*.md`
+
+Exclude these generated translation paths from review, grading, and edits:
+
+- `translations/*/.github/**`
+- `translations/*/samples/skills/**`
+
+Leave skill definition Markdown in English.
 
 Do not edit:
 
@@ -103,7 +110,7 @@ Do not edit:
 2. Compare each changed translated Markdown file with its corresponding English source file.
    - Example: compare `translations/es/README.md` with `README.md`.
    - Example: compare `translations/es/03-development-workflows/README.md` with `03-development-workflows/README.md`.
-3. Focus on files changed by the pull request, not every translated file in the repository.
+3. Focus on files changed by the pull request, not every translated file in the repository. Ignore excluded translation paths under `translations/*/.github/**` and `translations/*/samples/skills/**`.
 4. If the pull request body already has a managed `## Translation Quality Review` section, identify files with grades below A- and repair those files first.
 5. Preserve Markdown structure exactly unless a link or heading fix is required.
 6. Apply the shared quality rules and the language quality profile for each target language present in the pull request.
