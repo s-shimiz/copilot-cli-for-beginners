@@ -303,6 +303,9 @@ copilot --continue
 # Pick from a list of sessions interactively
 copilot --resume
 
+# -r is a shorthand for --resume (saves some typing!)
+copilot -r
+
 # Or resume a specific session by ID
 copilot --resume=abc123
 
