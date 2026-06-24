@@ -3,15 +3,16 @@
  */
 
 function validateEmail(email) {
+  // Allow a standard local part, require dot-separated domains, and reject consecutive dots.
   const emailRegex = /^(?!.*\.\.)([A-Za-z0-9._%+-]+)@([A-Za-z0-9-]+\.)+[A-Za-z]{2,}$/;
   return emailRegex.test(email);
 }
 
 function validateLoginInput(email, password) {
   const normalizedEmail = typeof email === 'string' ? email.trim() : '';
-  const hasPassword = typeof password === 'string' && password.trim();
+  const trimmedPassword = typeof password === 'string' ? password.trim() : '';
 
-  if (!normalizedEmail || !hasPassword) {
+  if (!normalizedEmail || !trimmedPassword) {
     throw new Error('Email and password are required');
   }
 

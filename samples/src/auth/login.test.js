@@ -19,15 +19,18 @@ test('validateLoginInput rejects blank email and password values', () => {
 });
 
 test('validateLoginInput rejects invalid email formats', () => {
-  for (const email of [
-    'reader-example.com',
-    'reader@domain.',
-    'reader@.com',
-    'reader@@example.com'
+  for (const { email, reason } of [
+    { email: 'reader-example.com', reason: 'missing @ symbol' },
+    { email: 'reader@domain.', reason: 'domain ends with a dot' },
+    { email: 'reader@.com', reason: 'domain starts with a dot' },
+    { email: 'reader@@example.com', reason: 'contains multiple @ symbols' }
   ]) {
     assert.throws(
       () => validateLoginInput(email, 'password123'),
-      /Please enter a valid email address/
+      {
+        message: /Please enter a valid email address/
+      },
+      reason
     );
   }
 });
