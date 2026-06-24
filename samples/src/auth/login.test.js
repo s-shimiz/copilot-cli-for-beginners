@@ -23,7 +23,9 @@ test('validateLoginInput rejects invalid email formats', () => {
     { email: 'reader-example.com', reason: 'missing @ symbol' },
     { email: 'reader@domain.', reason: 'domain ends with a dot' },
     { email: 'reader@.com', reason: 'domain starts with a dot' },
-    { email: 'reader@@example.com', reason: 'contains multiple @ symbols' }
+    { email: 'reader@@example.com', reason: 'contains multiple @ symbols' },
+    { email: 'reader..name@example.com', reason: 'contains consecutive dots in the local part' },
+    { email: 'reader@example..com', reason: 'contains consecutive dots in the domain' }
   ]) {
     assert.throws(
       () => validateLoginInput(email, 'password123'),

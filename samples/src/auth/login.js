@@ -3,9 +3,37 @@
  */
 
 function validateEmail(email) {
-  // Allow a standard local part, require dot-separated domains, and reject consecutive dots.
-  const emailRegex = /^(?!.*\.\.)([A-Za-z0-9._%+-]+)@([A-Za-z0-9-]+\.)+[A-Za-z]{2,}$/;
-  return emailRegex.test(email);
+  const emailParts = email.split('@');
+
+  if (emailParts.length !== 2) {
+    return false;
+  }
+
+  const [localPart, domain] = emailParts;
+  if (!localPart || !domain) {
+    return false;
+  }
+
+  if (
+    localPart.startsWith('.') ||
+    localPart.endsWith('.') ||
+    localPart.includes('..') ||
+    !/^[A-Za-z0-9._%+-]+$/.test(localPart)
+  ) {
+    return false;
+  }
+
+  const domainParts = domain.split('.');
+  if (domainParts.length < 2) {
+    return false;
+  }
+
+  const topLevelDomain = domainParts[domainParts.length - 1];
+  const hasInvalidDomainPart = domainParts.some(
+    part => !part || !/^[A-Za-z0-9-]+$/.test(part)
+  );
+
+  return !hasInvalidDomainPart && /^[A-Za-z]{2,}$/.test(topLevelDomain);
 }
 
 function validateLoginInput(email, password) {
@@ -22,6 +50,7 @@ function validateLoginInput(email, password) {
 
   return {
     email: normalizedEmail,
+    // Preserve the original password so legitimate leading/trailing spaces still work.
     password
   };
 }
