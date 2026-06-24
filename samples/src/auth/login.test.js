@@ -19,10 +19,17 @@ test('validateLoginInput rejects blank email and password values', () => {
 });
 
 test('validateLoginInput rejects invalid email formats', () => {
-  assert.throws(
-    () => validateLoginInput('reader-example.com', 'password123'),
-    /Please enter a valid email address/
-  );
+  for (const email of [
+    'reader-example.com',
+    'reader@domain.',
+    'reader@.com',
+    'reader@@example.com'
+  ]) {
+    assert.throws(
+      () => validateLoginInput(email, 'password123'),
+      /Please enter a valid email address/
+    );
+  }
 });
 
 test('handleLogin trims email before submitting and stores auth data', async () => {
