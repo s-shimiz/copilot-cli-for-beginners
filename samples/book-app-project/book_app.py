@@ -1,96 +1,88 @@
 import sys
-from books import BookCollection
+from books import Book, BookCollection
+from exceptions import BookAppError, BookNotFoundError
+from utils import (
+    print_books,
+    prompt_add_book,
+    prompt_remove_title,
+    prompt_search_query,
+    prompt_find_author,
+)
 
 
-# Global collection instance
 collection = BookCollection()
 
 
-def show_books(books):
-    """Display books in a user-friendly format."""
-    if not books:
-        print("No books found.")
-        return
-
-    print("\nYour Book Collection:\n")
-
-    for index, book in enumerate(books, start=1):
-        status = "✓" if book.read else " "
-        print(f"{index}. [{status}] {book.title} by {book.author} ({book.year})")
-
-    print()
-
-
-def handle_list():
+def handle_list() -> None:
     books = collection.list_books()
-    show_books(books)
+    print_books(books)
 
 
-def handle_add():
+def handle_add() -> None:
     print("\nAdd a New Book\n")
-
-    title = input("Title: ").strip()
-    author = input("Author: ").strip()
-    year_str = input("Year: ").strip()
-
+    title, author, year_str = prompt_add_book()
     try:
         year = int(year_str) if year_str else 0
         collection.add_book(title, author, year)
         print("\nBook added successfully.\n")
-    except ValueError as e:
+    except (ValueError, BookAppError) as e:
         print(f"\nError: {e}\n")
 
 
-def handle_remove():
+def handle_remove() -> None:
     print("\nRemove a Book\n")
+    title = prompt_remove_title()
+    try:
+        collection.remove_book(title)
+        print("\nBook removed successfully.\n")
+    except BookNotFoundError as e:
+        print(f"\nError: {e}\n")
 
-    title = input("Enter the title of the book to remove: ").strip()
-    collection.remove_book(title)
 
-    print("\nBook removed if it existed.\n")
+def handle_search() -> None:
+    print("\nSearch Books\n")
+    query = prompt_search_query()
+    books = collection.search(query)
+    print_books(books)
 
 
-def handle_find():
+def handle_find() -> None:
     print("\nFind Books by Author\n")
-
-    author = input("Author name: ").strip()
+    author = prompt_find_author()
     books = collection.find_by_author(author)
-
-    show_books(books)
-
-
-def show_help():
-    print("""
-Book Collection Helper
-
-Commands:
-  list     - Show all books
-  add      - Add a new book
-  remove   - Remove a book by title
-  find     - Find books by author
-  help     - Show this help message
-""")
+    print_books(books)
 
 
-def main():
+def show_help() -> None:
+    print("\nBook Collection Helper\n\nCommands:")
+    for name, (_, description) in COMMANDS.items():
+        print(f"  {name:<8} - {description}")
+    print()
+
+
+COMMANDS: dict[str, tuple[callable, str]] = {
+    "list":   (handle_list,   "Show all books"),
+    "add":    (handle_add,    "Add a new book"),
+    "remove": (handle_remove, "Remove a book by title"),
+    "find":   (handle_find,   "Find books by author"),
+    "search": (handle_search, "Search books by title or author"),
+    "help":   (show_help,     "Show this help message"),
+}
+
+
+def main() -> None:
     if len(sys.argv) < 2:
         show_help()
         return
 
     command = sys.argv[1].lower()
+    entry = COMMANDS.get(command)
 
-    if command == "list":
-        handle_list()
-    elif command == "add":
-        handle_add()
-    elif command == "remove":
-        handle_remove()
-    elif command == "find":
-        handle_find()
-    elif command == "help":
-        show_help()
+    if entry:
+        handler, _ = entry
+        handler()
     else:
-        print("Unknown command.\n")
+        print(f'Unknown command: "{command}".\n')
         show_help()
 
 
