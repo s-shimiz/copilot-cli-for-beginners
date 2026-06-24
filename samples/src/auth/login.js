@@ -2,16 +2,36 @@
  * Login form handler
  */
 
-async function handleLogin(email, password) {
-  // Basic validation
-  if (!email || !password) {
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+function validateLoginInput(email, password) {
+  const normalizedEmail = typeof email === 'string' ? email.trim() : '';
+  const hasPassword = typeof password === 'string' && password.trim();
+
+  if (!normalizedEmail || !hasPassword) {
     throw new Error('Email and password are required');
   }
+
+  if (!validateEmail(normalizedEmail)) {
+    throw new Error('Please enter a valid email address');
+  }
+
+  return {
+    email: normalizedEmail,
+    password
+  };
+}
+
+async function handleLogin(email, password) {
+  const validatedInput = validateLoginInput(email, password);
 
   const response = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify(validatedInput)
   });
 
   if (!response.ok) {
@@ -45,6 +65,8 @@ function getCurrentUser() {
 
 module.exports = {
   handleLogin,
+  validateEmail,
+  validateLoginInput,
   isLoggedIn,
   logout,
   getCurrentUser
