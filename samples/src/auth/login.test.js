@@ -54,6 +54,7 @@ test('handleLogin trims email before submitting and stores auth data', async () 
 
   const storage = new Map();
   const user = { id: 1, name: 'Reader', email: 'reader@example.com' };
+  const password = '  password123  ';
 
   global.localStorage = {
     getItem(key) {
@@ -73,7 +74,7 @@ test('handleLogin trims email before submitting and stores auth data', async () 
     const body = JSON.parse(options.body);
     assert.deepEqual(body, {
       email: 'reader@example.com',
-      password: 'password123'
+      password
     });
 
     return {
@@ -85,7 +86,7 @@ test('handleLogin trims email before submitting and stores auth data', async () 
   };
 
   try {
-    const loggedInUser = await handleLogin('  reader@example.com  ', 'password123');
+    const loggedInUser = await handleLogin('  reader@example.com  ', password);
 
     assert.deepEqual(loggedInUser, user);
     assert.equal(storage.get('authToken'), 'token-123');
