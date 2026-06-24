@@ -33,11 +33,12 @@ function validateEmail(email) {
     part => !part || !/^[A-Za-z0-9-]+$/.test(part)
   );
 
-  return !hasInvalidDomainPart && /^[A-Za-z]{2,}$/.test(topLevelDomain);
+  return !hasInvalidDomainPart && /^[A-Za-z]{2,63}$/.test(topLevelDomain);
 }
 
 function validateLoginInput(email, password) {
   const normalizedEmail = typeof email === 'string' ? email.trim() : '';
+  // Use a trimmed copy only to reject blank input without changing the submitted password.
   const trimmedPassword = typeof password === 'string' ? password.trim() : '';
 
   if (!normalizedEmail || !trimmedPassword) {

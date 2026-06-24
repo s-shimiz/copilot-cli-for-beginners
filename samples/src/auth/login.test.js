@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 
 const {
   handleLogin,
+  validateEmail,
   validateLoginInput
 } = require('./login');
 
@@ -34,6 +35,16 @@ test('validateLoginInput rejects invalid email formats', () => {
       },
       reason
     );
+  }
+});
+
+test('validateEmail accepts common valid email formats', () => {
+  for (const email of [
+    'user@example.com',
+    'user.name@sub.example.co.uk',
+    'user+tag@example.org'
+  ]) {
+    assert.equal(validateEmail(email), true);
   }
 });
 
